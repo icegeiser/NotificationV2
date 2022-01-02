@@ -13,9 +13,30 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.os.Handler;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    //---------------------------------------------------------------------------------------------
+    // Create the Handler
+    // O handler é o modo para realizar uma tarefa repetidamente.
+    // Essa tarefa será monitorar o estados do telefone se está bloqueado ou não.
+    // Quando ele estiver bloqueado, não acontece nada, quando ele está desbloqueado, manda uma
+    // mensagem para o celular avisando que o telefone foi desbloqueado.
+    private int iteration = 0;
+    private Handler handler = new Handler();
 
+    // Define the code block to be executed
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            handler.postDelayed(runnable, 2000);
+        }
+    };
+    //---------------------------------------------------------------------------------------------
+
+    //---------------------------------------------------------------------------------------------
+    // Criando as mensagens que serão enviadas ao celular, essas mensagens são as Notification bar
     private final String CHANNEL_ID = "personal_notifications";
     private final int NOTIFICATION_ID = 001;
     private Context сontext;
@@ -27,7 +48,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void displayNotification(View view) {
+    public void displayNotification(View view) throws InterruptedException {
+
+        // Start the Runnable immediately
+        handler.post(runnable);
+
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         // The id of the channel.
@@ -86,7 +111,11 @@ public class MainActivity extends AppCompatActivity {
             //}
         }
     }
+    //---------------------------------------------------------------------------------------------
 
+    //---------------------------------------------------------------------------------------------
+    // Método para verificar se o celular está bloqueado ou não, o retorno é true para bloqueado
+    // e false para desbloqueado.
     private boolean isPhoneIsLockedOrNot(Context context) {
         boolean isPhoneLock = false;
         if (context != null) {
@@ -97,4 +126,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return isPhoneLock;
     }
+    //---------------------------------------------------------------------------------------------
+
 }
+
