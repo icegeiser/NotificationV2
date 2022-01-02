@@ -30,6 +30,25 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+
+            boolean phoneLocked;
+            Context context = null;
+            //phoneLocked = isPhoneIsLockedOrNot(context);
+            phoneLocked = checkPhoneScreenLocked();
+
+            if (phoneLocked == true){
+                //phoneLocked
+            } else {
+                iteration++;
+                //phoneUnlocked
+                //----------------------------------------------------------------------------------
+                // Specify the layout you are using.
+                setContentView(R.layout.activity_main);
+
+                // Load and use views afterwards
+                TextView txtView = (TextView)findViewById(R.id.textView2);
+                txtView.setText("Hello" +String.valueOf(iteration));
+            }
             handler.postDelayed(runnable, 2000);
         }
     };
@@ -40,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private final String CHANNEL_ID = "personal_notifications";
     private final int NOTIFICATION_ID = 001;
     private Context сontext;
-    private boolean flagOnceTime = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,32 +101,16 @@ public class MainActivity extends AppCompatActivity {
             // The id of the channel.
             String CHANNEL_ID = "my_channel_01";
 
-            boolean phoneLocked;
 
+            Notification notification = new Notification.Builder(MainActivity.this)
+               .setContentTitle("Unlock Warning")
+               .setContentText("Seu celular foi desbloqueado.")
+               .setSmallIcon(R.drawable.ic_sms_notification)
+               .setChannelId(CHANNEL_ID)
+               .build();
 
-            Context context = null;
-            phoneLocked = isPhoneIsLockedOrNot(context);
-
-            //if (flagOnceTime == false) {
-                if (phoneLocked == true){
-                    //phoneLocked
-                } else {
-                    //phoneUnlocked
-                    //----------------------------------------------------------------------------------
-                    // Create a notification and set the notification channel.
-                    Notification notification = new Notification.Builder(MainActivity.this)
-                        .setContentTitle("Unlock Warning")
-                        .setContentText("Seu celular foi desbloqueado.")
-                        .setSmallIcon(R.drawable.ic_sms_notification)
-                        .setChannelId(CHANNEL_ID)
-                        .build();
-
-                    // Issue the notification.
-                    mNotificationManager.notify(NOTIFICATION_ID, notification);
-                    //----------------------------------------------------------------------------------
-                    flagOnceTime = true;
-                }
-            //}
+            // Issue the notification.
+            mNotificationManager.notify(NOTIFICATION_ID, notification);
         }
     }
     //---------------------------------------------------------------------------------------------
@@ -127,6 +129,19 @@ public class MainActivity extends AppCompatActivity {
         return isPhoneLock;
     }
     //---------------------------------------------------------------------------------------------
+
+    private boolean checkPhoneScreenLocked(){
+        boolean isPhoneLock = false;
+        KeyguardManager myKM = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
+        if( myKM.isKeyguardLocked()) {
+            System.out.println("Phone is locked");
+            isPhoneLock = true;
+        } else {
+            isPhoneLock = false;
+            System.out.println("Phone is not locked");
+        }
+        return isPhoneLock;
+    }
 
 }
 
