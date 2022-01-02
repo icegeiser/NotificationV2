@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private final String CHANNEL_ID = "personal_notifications";
     private final int NOTIFICATION_ID = 001;
     private Context сontext;
+    private boolean flagOnceTime = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,26 +58,43 @@ public class MainActivity extends AppCompatActivity {
             // The id of the channel.
             String CHANNEL_ID = "my_channel_01";
 
-            // Create a notification and set the notification channel.
-            Notification notification = new Notification.Builder(MainActivity.this)
-                    .setContentTitle("Unlock Warning")
-                    .setContentText("Seu celular foi desbloqueado.")
-                    .setSmallIcon(R.drawable.ic_sms_notification)
-                    .setChannelId(CHANNEL_ID)
-                    .build();
+            boolean phoneLocked;
 
-            // Issue the notification.
-            mNotificationManager.notify(NOTIFICATION_ID, notification);
 
-            //KeyguardManager myKM = (KeyguardManager) сontext.getSystemService(Context.KEYGUARD_SERVICE);
-            //if( myKM.inKeyguardRestrictedInputMode() ) {
-            //    // it is locked
-            //} else {
-            //    //it is not locked
+            Context context = null;
+            phoneLocked = isPhoneIsLockedOrNot(context);
+
+            //if (flagOnceTime == false) {
+                if (phoneLocked == true){
+                    //phoneLocked
+                } else {
+                    //phoneUnlocked
+                    //----------------------------------------------------------------------------------
+                    // Create a notification and set the notification channel.
+                    Notification notification = new Notification.Builder(MainActivity.this)
+                        .setContentTitle("Unlock Warning")
+                        .setContentText("Seu celular foi desbloqueado.")
+                        .setSmallIcon(R.drawable.ic_sms_notification)
+                        .setChannelId(CHANNEL_ID)
+                        .build();
+
+                    // Issue the notification.
+                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+                    //----------------------------------------------------------------------------------
+                    flagOnceTime = true;
+                }
             //}
         }
-
     }
-     
 
+    private boolean isPhoneIsLockedOrNot(Context context) {
+        boolean isPhoneLock = false;
+        if (context != null) {
+            KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+            if (myKM != null && myKM.isKeyguardLocked()) {
+                isPhoneLock = true;
+            }
+        }
+        return isPhoneLock;
+    }
 }
